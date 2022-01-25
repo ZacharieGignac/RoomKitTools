@@ -2,7 +2,7 @@ import xapi from 'xapi';
 
 const ENABLE_SAUCE = true; //Mettre à 'false' pour la calibration
 const LIVE_CALIBRATION = false; //Une autre bonne solution pour la calibration
-const SHOW_BOOST_MODE = false; //Montre le mode actuel dans la console (désactiver avant de mettre en prod!)
+const SHOW_BOOST_MODE = true; //Montre le mode actuel dans la console (désactiver avant de mettre en prod!)
 const SHOW_PROCESSING_TIME = false; //Montre le nombre de temps en MS pour le processing du DSP (le plus bas possible semble 198ms)
 const SAMPLE_INTERVAL = 50; //Je ne recommande pas <50ms. Entre 50 et 100 semble un bon choix
 const NUMBER_OF_SAMPLES = 2; //Nombre de lecture de VU fait. Une moyenne en est tirée. NUMBER_OF_SAMPLES * SAMPLE_INTERVAL
@@ -16,28 +16,28 @@ var config = {
       connector: 6,
       gains: [
         {
-          gain: 51,
-          silence: 10
+          gain: 64,
+          silence: 20
         },
         {
-          gain: 58,
+          gain: 70,
           silence: 25
         },
         {
           gain: 'default',
-          silence: 15
+          silence: 20
         }
       ]
     },
     {
-      connector: 5,
+      connector: 8,
       gains: [
         {
-          gain: 51,
-          silence: 10
+          gain: 56,
+          silence: 15
         },
         {
-          gain: 68,
+          gain: 70,
           silence: 25
         },
         {
@@ -94,6 +94,15 @@ async function startSampling() {
 
 
   console.log('Starting sampling...');
+
+  for (const mic of config.presenterMics) {
+    var gain = await xapi.Config.Audio.Input.Microphone[mic.connector].Level.get();
+    gain = parseInt(gain);
+    xapi.Config.Audio.Input.Microphone[mic.connector].Level.on(newGain => {
+      getCurrentGains();
+    });
+  }
+
   listenToVuMeter();
 }
 
@@ -133,7 +142,7 @@ function listenToVuMeter() {
                 }
 
                 if (LIVE_CALIBRATION) {
-                  console.log(currentMic.connector + '->' + currentMic.sampleAverage);
+                  console.log(currentMic.connector + '[' + currentGain + ']->' + currentMic.sampleAverage);
                 }
                 if (currentMic.sampleAverage < silence) {
                   silentStatus[currentMic.connector] = true;
@@ -253,15 +262,13 @@ function initDefaults() {
 }
 
 async function getCurrentGains() {
+
   for (const mic of config.presenterMics) {
     var gain = await xapi.Config.Audio.Input.Microphone[mic.connector].Level.get();
-    gain = parseInt(gain);
-    xapi.Config.Audio.Input.Microphone[mic.connector].Level.on(newGain => {
-      getCurrentGains();
-    });
     mic.currentGain = gain;
   }
 }
+
 
 function catchCalibrationCommands() {
   xapi.Status.Call.on(e => {
