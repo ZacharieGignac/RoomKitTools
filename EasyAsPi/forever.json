@@ -1,0 +1,10 @@
+[
+  {
+    "uid": "eap",
+    "append": true,
+    "watch": false,
+    "script": "eap.js",
+    "sourceDir": "/home/pi/smbshare/EasyAsPi/",
+    "workingDir": "/home/pi/smbshare/EasyAsPi/"
+  }
+]
