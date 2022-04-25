@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "jsxapi": "^5.1.1",
+    "serialport": "^9.2.8"
+  }
+}

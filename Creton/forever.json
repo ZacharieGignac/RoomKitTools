@@ -1,0 +1,10 @@
+[
+  {
+    "uid": "Creton",
+    "append": true,
+    "watch": false,
+    "script": "creton.js",
+    "sourceDir": "/home/pi/smbshare/Creton/",
+    "workingDir": "/home/pi/smbshare/Creton/"
+  }
+]
