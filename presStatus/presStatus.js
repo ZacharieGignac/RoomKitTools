@@ -14,54 +14,6 @@ async function checkPresentationStatus() {
   processCallbacks(presStatus);
 }
 
-/*
-export async function getPresentationStatus() {
-  return new Promise(success => {
-    var status = {};
-    xapi.Status.Conference.Presentation.get().then(pres => {
-      if (pres.Mode == 'Receiving') {
-        status.remotePresentation = true;
-      }
-      else {
-        status.remotePresentation = false;
-      }
-      if (pres.LocalInstance !== undefined) {
-        status.localPresentation = true;
-        status.localPresentationMode = pres.LocalInstance[0].SendingMode;
-        status.source = pres.LocalInstance[0].Source;
-        status.id = pres.LocalInstance[0].id;
-        if (status.remotePresentation == true) {
-          if (status.localPresentationMode === 'LocalOnly') {
-            status.presentationType = PRES_REMOTELOCALPREVIEW;
-          }
-          else {
-            status.presentationType = PRES_REMOTE;
-          }
-        }
-        else {
-          if (status.localPresentationMode === 'LocalOnly') {
-            status.presentationType = PRES_LOCALPREVIEW;
-          }
-          else {
-            status.presentationType = PRES_LOCALSHARE;
-          }
-        }
-        success(status);
-      }
-      else {
-        status.localPresentation = false;
-        if (status.remotePresentation == true) {
-          status.presentationType = PRES_REMOTE;
-        }
-        else {
-          status.presentationType = PRES_NOPRES;
-        }
-        success(status);
-      }
-    });
-  });
-}
-*/
 
 function processCallbacks(presStatus) {
   for (const e of eventSinks) e(presStatus);
