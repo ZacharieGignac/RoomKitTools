@@ -11,4 +11,4 @@ Events that fires between macros. Supports multiple syntax, native objects, func
 All presentation types detection. Sync and async models, includes event-based presentation status detection
 
 ## xPrompts
-Prompts and TextInput simplified. No FeedbackId to manage, only callbacks. Supports callbacks per choice, any and clear.
+Prompts and TextInput simplified. No FeedbackId to manage, only callbacks. Supports callbacks per choice, any and clear. Uses the same JSON format than the original xapi prompts and textinput.
