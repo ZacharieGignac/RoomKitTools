@@ -9,6 +9,3 @@ Events that fires between macros. Supports multiple syntax, native objects, func
 
 ## presStatus
 All presentation types detection. Sync and async models, includes event-based presentation status detection
-
-## xPrompts
-Prompts and TextInput simplified. No FeedbackId to manage, only callbacks. Supports callbacks per choice, any and clear.
