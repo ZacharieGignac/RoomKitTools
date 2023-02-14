@@ -10,8 +10,10 @@ xapi.Event.UserInterface.Message.TextInput.Cleared.on(value => processTextInputC
 
 
 function generateUniqueID() {
+  const millisecondsSinceEpoch = Date.now().toString(36);
   const randomNumber = Math.floor(Math.random() * 1000000000000).toString(36);
-  return randomNumber;
+  const randomNumber2 = Math.floor(Math.random() * 1000000000000).toString(36);
+  return `${millisecondsSinceEpoch}${randomNumber}${randomNumber2}`;
 }
 
 function processCleared(response) {
@@ -63,15 +65,3 @@ export function prompt(prompt) {
   delete (prompt.Any);
   xapi.Command.UserInterface.Message.Prompt.Display(prompt);
 }
-
-
-
-
-
-
-
-
-
-
-
-
