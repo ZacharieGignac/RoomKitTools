@@ -1,2 +1,2 @@
 # AutoUpdater
-## A simple auto update system for Cisco Webex devices
+A simple auto update system for Cisco Webex devices
