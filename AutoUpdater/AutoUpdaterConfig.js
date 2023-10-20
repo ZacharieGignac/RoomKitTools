@@ -6,23 +6,18 @@ let autoupdaterconfig = {
     "updateStartDelay": 5,
     "updateInstallDelay": 15,
     "scheduleUpdate": true,
-    "updateTime": "10:26",
+    "updateTime": "04:00",
     "manifestVersion": 1,
     "branches": [
         {
-            "id": "dev",
-            "version": 5,
-            "url": "https://raw.githubusercontent.com/ZacharieGignac/MCS/main/autoupdater/dev/%FILE%?raw=true"
+            "id": "my own webserver",
+            "version": 0,
+            "url": "https://mycompany.com/dev-branch/%FILE%"
         },
         {
-            "id": "dev2",
-            "version": 2,
-            "url": "https://raw.githubusercontent.com/ZacharieGignac/MCS/main/autoupdater/dev/%FILE%?raw=true"
-        },
-        {
-            "id": "dev3",
-            "version": 5,
-            "url": "https://raw.githubusercontent.com/ZacharieGignac/MCS/main/autoupdater/dev/%FILE%?raw=true"
+            "id": "Github",
+            "version": 0,
+            "url": "https://raw.githubusercontent.com/MyGithubUser/updates/main/autoupdater/dev-branch/%FILE%?raw=true"
         }
     ]
 }
