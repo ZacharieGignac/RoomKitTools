@@ -39,8 +39,7 @@ async function readConfig() {
         Content: 'True',
         Name: 'AutoUpdaterConfig'
       });
-      let contentobject = JSON.parse(contentjson);
-      let configobject = contentobject.Macro[0].Content;
+      let configobject = contentjson.Macro[0].Content;
       let config = configobject.substring(24);
       config = JSON.parse(config);
       currentConfig = config;
