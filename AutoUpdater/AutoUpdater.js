@@ -72,6 +72,9 @@ let configtemplate = {
 }
 //writeConfig(configtemplate);
 
+function sanitizeJSON(unsanitized){	
+    return unsanitized.replace(/\n/g, "").replace(/\r/g, ""); 
+}
 
 async function updatebranch(manifestVersion, branch, manual = false) {
   return new Promise(async (resolve, reject) => {
@@ -88,7 +91,7 @@ async function updatebranch(manifestVersion, branch, manual = false) {
       var updateFound = false;
       displaytext(1, `Got manifest. Reading...`);
       try {
-        var manifest = JSON.parse(response.Body);
+        var manifest = JSON.parse(sanitizeJSON(response.Body));
         if (manifest.version == manifestVersion) {
           displaytext(1, `[Manifest version ${manifest.version}, channel "${manifest.channel}", ${manifest.updates.length} total updates available]`);
           displaytext(1, `Looking for next update...`);
@@ -126,7 +129,8 @@ async function updatebranch(manifestVersion, branch, manual = false) {
         }
       }
       catch (err) {
-        console.error(3, `Error reading manifest: ${err}`);
+        console.error(`Error reading manifest: ${err}`);
+        console.error(sanitizeJSON(response.Body));
         resolve();
       }
     });
