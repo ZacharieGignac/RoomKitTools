@@ -1,3 +1,5 @@
+# CURRENTLY BROKEN. WILL UPDATE NOVEMBER 3RD.
+
 # AutoUpdater
 A simple auto update system for Cisco Webex devices
 
