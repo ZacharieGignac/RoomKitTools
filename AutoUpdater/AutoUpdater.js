@@ -1,3 +1,4 @@
+/* jshint esversion:8 */
 //Version: 0.0.1 (beta)
 
 import xapi from 'xapi';
@@ -12,7 +13,7 @@ function schedule(time, action) {
   now = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
   let difference = parseInt(alarmH) * 3600 + parseInt(alarmM) * 60 - now;
   if (difference <= 0) difference += 24 * 3600;
-  clearTimeout(scheduleTimeout)
+  clearTimeout(scheduleTimeout);
   scheduleTimeout = setTimeout(action, difference * 1000);
 }
 
@@ -39,8 +40,7 @@ async function readConfig() {
         Content: 'True',
         Name: 'AutoUpdaterConfig'
       });
-      let contentobject = JSON.parse(contentjson);
-      let configobject = contentobject.Macro[0].Content;
+      let configobject = contentjson.Macro[0].Content;
       let config = configobject.substring(24);
       config = JSON.parse(config);
       currentConfig = config;
@@ -62,17 +62,9 @@ async function writeConfig(config) {
 }
 
 
-let configtemplate = {
-  manifestVersion: 1,
-  branches: [
-    {
-      version: 0,
-      branch: 'https://raw.githubusercontent.com/ZacharieGignac/MCS/main/autoupdater/dev/%FILE%?raw=true'
-    },
-  ]
+function sanitizeJSON(unsanitized){	
+    return unsanitized.replace(/\n/g, "").replace(/\r/g, ""); 
 }
-//writeConfig(configtemplate);
-
 
 async function updatebranch(manifestVersion, branch, manual = false) {
   return new Promise(async (resolve, reject) => {
@@ -89,7 +81,7 @@ async function updatebranch(manifestVersion, branch, manual = false) {
       var updateFound = false;
       displaytext(1, `Got manifest. Reading...`);
       try {
-        var manifest = JSON.parse(response.Body);
+        var manifest = JSON.parse(sanitizeJSON(response.Body));
         if (manifest.version == manifestVersion) {
           displaytext(1, `[Manifest version ${manifest.version}, channel "${manifest.channel}", ${manifest.updates.length} total updates available]`);
           displaytext(1, `Looking for next update...`);
@@ -107,7 +99,7 @@ async function updatebranch(manifestVersion, branch, manual = false) {
                 xapi.Command.Provisioning.Service.Fetch({ Mode: update.mode, URL: updatefile }).then(() => {
                   resolve();
                 }).catch(err => {
-                  displaytext(3, `updatebranch error: ${err}`)
+                  displaytext(3, `updatebranch error: ${err}`);
                   displaytext(3, `Update error. Reverting version in branch.`);
                   updateConfigBranchVersion(branch.id, branchCurrentVersion);
                   resolve();
@@ -127,7 +119,8 @@ async function updatebranch(manifestVersion, branch, manual = false) {
         }
       }
       catch (err) {
-        console.error(3, `Error reading manifest: ${err}`);
+        console.error(`Error reading manifest: ${err}`);
+        console.error(sanitizeJSON(response.Body));
         resolve();
       }
     });
@@ -171,6 +164,12 @@ async function update() {
 
 
 async function init() {
+  xapi.Event.Message.Send.Text.on(text => {
+    if (text == 'update now') {
+      console.warn(`Updating NOW: Received request by terminal command.`);
+      update();
+    }
+  });
   await readConfig();
   if (currentConfig.scheduleUpdate) {
     displaytext(1, `Scheduling automatic updates for ${currentConfig.updateTime}`);
@@ -182,8 +181,14 @@ async function init() {
       update();
     }, currentConfig.updateStartDelay * 1000);
   }
+  else {
+    console.warn(`Skipping updates on start.`);
+  }
 
 }
 
 
 init();
+
+
+
