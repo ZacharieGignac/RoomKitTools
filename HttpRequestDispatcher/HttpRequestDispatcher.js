@@ -1,6 +1,6 @@
 import xapi from 'xapi';
 
-const HTTPREQUESTDISPATCHER_NUMBER_OF_CLIENTS = 3; //Don't go more than 3. It will fail. 2 is even more safe, but a bit slower.
+export const HTTPREQUESTDISPATCHER_NUMBER_OF_CLIENTS = 3; //Don't go more than 3. It will fail. 2 is even more safe, but a bit slower.
 
 class HttpRequestQueue {
   constructor() {
@@ -88,66 +88,6 @@ export class HttpRequestDispatcher {
     return nextClient.httpRequest(clientParameters);
   }
 
-}
-
-
-//EXAMPLE
-/*
-
-Simple request with promises:
-
-const hrd = new HttpRequestDispatcher();
-
-hrd.httpRequest({
-  Method:'GET',
-  Timeout:3,
-  Url:'https://www.google.com'
-}).then(response => {
-  console.log(response);
-}).catch(err => {
-  console.log(error);
-});
-
-
-
-
-Simple request (await):
-
-
-async function test() {
-const hrd = new HttpRequestDispatcher();
-let response = await hrd.httpRequest({
-  Method:'GET',
-  Timeout:3,
-  Url:'https://www.google.com'
-});
-}
-
-test();
-
-
-
-*/
-
-const NUMBER_OF_REQUESTS = 50;
-const HOST = 'https://www.google.com';
-
-const hrd = new HttpRequestDispatcher();
-
-var responses = 0;
-var startTime = new Date();
-console.log(`Making ${NUMBER_OF_REQUESTS} HTTP GET requests to ${HOST}`);
-for (let i = 0; i < 1000; i++) {
-  hrd.httpRequest({ Method: 'GET', Url: HOST })
-    .then(response => {
-      responses++;
-      if (responses == NUMBER_OF_REQUESTS) {
-        console.log(`Finished 1000 in ${new Date() - startTime}ms (Using ${HTTPREQUESTDISPATCHER_NUMBER_OF_CLIENTS} threads)`);
-      }
-    })
-    .catch(error => {
-      console.error("Error:", error);
-    });
 }
 
 
