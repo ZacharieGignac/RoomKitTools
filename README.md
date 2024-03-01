@@ -12,3 +12,6 @@ All presentation types detection. Sync and async models, includes event-based pr
 
 ## xPrompts
 Prompts and TextInput simplified. No FeedbackId to manage, only callbacks. Supports callbacks per choice, any and clear. Uses the same JSON format than the original xapi prompts and textinput.
+
+## HttpRequestDispatcher
+Make HTTP requests without worries. About 55% faster when making multiple requests back-to-back.
