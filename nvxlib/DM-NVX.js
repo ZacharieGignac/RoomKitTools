@@ -165,7 +165,7 @@ class NvxClient {
     this.serialPort = {
       name: this.name
     }
-
+    this.basedeviceurl = `https://${this.ip}/Device/`;
 
 
   }
@@ -262,7 +262,7 @@ class NvxClient {
 
   async nvxPost(url, body) {
     if (body == undefined) body = '';
-
+    if (typeof body == 'object') { body = JSON.stringify(body) };
 
     var result = await xapi.Command.HttpClient.Post({
       AllowInsecureHTTPS: true,
@@ -278,7 +278,7 @@ class NvxClient {
 
   async test() {
     await this.login();
-    var result = this.nvxGet(`https://${this.ip}/Device/DeviceInfo`);
+    var result = this.nvxGet(`${this.basedeviceurl}DeviceInfo`);
     /*
     var result = await xapi.Command.HttpClient.Get({
       AllowInsecureHTTPS: true,
@@ -320,7 +320,7 @@ class NvxClient {
       }
     };
 
-    this.nvxPost(`https://${this.ip}/Device/`, JSON.stringify(request));
+    this.nvxPost(this.basedeviceurl, request);
 
   }
 
@@ -333,7 +333,7 @@ class NvxClient {
       }
     };
 
-    this.nvxPost(`https://${this.ip}/Device/`, JSON.stringify(request));
+    this.nvxPost(this.basedeviceurl, request);
   }
 
   async setOsd(text) {
@@ -345,47 +345,97 @@ class NvxClient {
         }
       }
     }
-    await this.nvxPost(`https://${this.ip}/Device/`, JSON.stringify(request));
   }
 
   async powerOn() {
     let request = {
-      Device:{
-        ControlPorts:{
-          Serial:{
-            Port1:{
-              Capabilities:{
-                SerialPortType:'Serial232'
+      Device: {
+        ControlPorts: {
+          Serial: {
+            Port1: {
+              Capabilities: {
+                SerialPortType: 'Serial232'
               },
-              TransmitData:'PWR ON\r\n',
-              TransmitDataFormat:'Ascii'
+              TransmitData: 'PWR ON\r\n',
+              TransmitDataFormat: 'Ascii'
             }
           }
         }
       }
     };
 
-    await this.nvxPost(`https://${this.ip}/Device`, JSON.stringify(request));
+    await this.nvxPost(this.basedeviceurl, request);
   }
   async powerOff() {
     let request = {
-      Device:{
-        ControlPorts:{
-          Serial:{
-            Port1:{
-              Capabilities:{
-                SerialPortType:'Serial232'
+      Device: {
+        ControlPorts: {
+          Serial: {
+            Port1: {
+              Capabilities: {
+                SerialPortType: 'Serial232'
               },
-              TransmitData:'PWR OFF\r\n',
-              TransmitDataFormat:'Ascii'
+              TransmitData: 'PWR OFF\r\n',
+              TransmitDataFormat: 'Ascii'
             }
           }
         }
       }
     };
 
-    await this.nvxPost(`https://${this.ip}/Device`, JSON.stringify(request));
+    await this.nvxPost(this.basedeviceurl, request);
   }
+
+  async mute() {
+    let request = {
+      Device: {
+        ControlPorts: {
+          Serial: {
+            Port1: {
+              Capabilities: {
+                SerialPortType: 'Serial232'
+              },
+              TransmitData: 'MUTE ON\r\n',
+              TransmitDataFormat: 'Ascii'
+            }
+          }
+        }
+      }
+    };
+
+    await this.nvxPost(this.basedeviceurl, request);
+  }
+
+
+  async unmute() {
+    let request = {
+      Device: {
+        ControlPorts: {
+          Serial: {
+            Port1: {
+              Capabilities: {
+                SerialPortType: 'Serial232'
+              },
+              TransmitData: 'MUTE OFF\r\n',
+              TransmitDataFormat: 'Ascii'
+            }
+          }
+        }
+      }
+    };
+
+    await this.nvxPost(this.basedeviceurl, request);
+  }
+
+
+  async getInputStatus() {
+    let result = await this.nvxGet(`http://${this.ip}/Device/AudioVideoInputOutput/`, '');
+    let rawdata = result.Body;
+    let data = JSON.parse(rawdata);
+    let sync = data.Device.AudioVideoInputOutput.Inputs[0].Ports[0].IsSyncDetected;
+    return sync;
+  }
+
 
 }
 
@@ -402,7 +452,6 @@ async function test() {
   //nvxc.setExtract();
 
   xapi.Event.UserInterface.Extensions.Widget.Action.on(value => {
-    console.log(value);
     if (value.Type == 'pressed') {
       if (value.Value == 'insert') {
         nvxc.setInsert();
@@ -416,6 +465,12 @@ async function test() {
       else if (value.WidgetId == 'epsonpwroff') {
         nvxc.powerOff();
       }
+      else if (value.WidgetId == 'epsonmute') {
+        nvxc.mute();
+      }
+      else if (value.WidgetId == 'epsonunmute') {
+        nvxc.unmute();
+      }
     }
   });
 
@@ -426,9 +481,13 @@ async function test() {
   });
 
   /*
-    setInterval(async () => {
-      await nvxc.checkSerialPort();
-    }, 4000);
+  setInterval(async () => {
+    let status = await nvxc.getInputStatus();
+    xapi.Command.UserInterface.Extensions.Widget.SetValue({
+      WidgetId: 'input1sync',
+      Value: status ? 'on' : 'off'
+    });
+  }, 1000);
   */
 
 
