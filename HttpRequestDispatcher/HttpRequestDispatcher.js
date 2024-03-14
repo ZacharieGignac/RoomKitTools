@@ -1,6 +1,7 @@
 import xapi from 'xapi';
 
 export const HTTPREQUESTDISPATCHER_NUMBER_OF_CLIENTS = 3; //Don't go more than 3. It will fail. 2 is even more safe, but a bit slower.
+export const AUTO_CREATE_DISPATCHER = true; //Needed if using new syntax (Bobby's way)
 
 class HttpRequestQueue {
   constructor() {
@@ -91,4 +92,33 @@ export class HttpRequestDispatcher {
 }
 
 
+if (AUTO_CREATE_DISPATCHER) {
+  let hrd = new HttpRequestDispatcher();
+}
 
+  export var hapi = {
+    Command: {
+      HttpClient: {
+        Get: (clientParameters) => {
+          clientParameters.Method = 'GET';
+          return hrd.httpRequest(clientParameters);
+        },
+        Post: (clientParameters) => {
+          clientParameters.Method = 'POST';
+          return hrd.httpRequest(clientParameters);
+        },
+        Put: (clientParameters) => {
+          clientParameters.Method = 'PUT';
+          return hrd.httpRequest(clientParameters);
+        },
+        Delete: (clientParameters) => {
+          clientParameters.Method = 'DELETE';
+          return hrd.httpRequest(clientParameters);
+        },
+        Patch: (clientParameters) => {
+          clientParameters.Method = 'PATCH';
+          return hrd.httpRequest(clientParameters);
+        }
+      }
+    }
+  }
