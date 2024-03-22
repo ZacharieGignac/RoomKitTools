@@ -91,9 +91,9 @@ export class HttpRequestDispatcher {
 
 }
 
-
+var hrd;
 if (AUTO_CREATE_DISPATCHER) {
-  let hrd = new HttpRequestDispatcher();
+  hrd = new HttpRequestDispatcher();
 }
 
   export var hapi = {
